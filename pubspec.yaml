@@ -1,14 +1,10 @@
 name: cancelable_stream
-description: A starting point for Dart libraries or applications.
+description: A stream wrapper that supports explicit cancellation of the upstream source.
+repository: https://github.com/tomwyr/cancelable_stream
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
 
 environment:
-  sdk: ^3.10.0
-
-# Add regular dependencies here.
-dependencies:
-  # path: ^1.9.0
+  sdk: ">=3.0.0 <4.0.0"
 
 dev_dependencies:
   lints: ^6.0.0
