@@ -1,39 +1,59 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# cancelable_stream
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages). 
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages). 
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+A Dart stream wrapper that allows streams to be canceled, unsubscribing from the upstream source and completing downstream listeners.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+The package works with any Dart project. Make sure your `pubspec.yaml` includes:
+
+```yaml
+dependencies:
+  cancelable_stream: ^1.0.0
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+A simple example of using `CancelableStream`:
 
 ```dart
-const like = 'sample';
+import 'package:cancelable_stream/cancelable_stream.dart';
+
+void main() async {
+  // A stream that emits numbers at one-second intervals
+  createStream() async* {
+    for (var value in [1, 2, 3, 4, 5]) {
+      await Future.delayed(Duration(seconds: 1));
+      print('Emit $value');
+      yield value;
+    }
+    print('Producer done');
+  }
+
+  // Wrap the stream so it can be canceled
+  final stream = createStream().cancelable();
+
+  // Cancel the stream after 2.5 seconds
+  Future.delayed(Duration(milliseconds: 2500), stream.cancel);
+
+  // Listen to the events
+  await for (var value in stream) {
+    print('Consume $value');
+  }
+  print('Subscriber done');
+}
+```
+
+The output will be:
+
+```
+Emit 1
+Consume 1
+Emit 2
+Consume 2
+Emit 3   // Print occurs before yield; the value is never delivered
+Subscriber done
 ```
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+Contributions are welcome. If you find bugs, have feature requests, or want to improve the package, please open an issue or submit a pull request on the GitHub repository.
